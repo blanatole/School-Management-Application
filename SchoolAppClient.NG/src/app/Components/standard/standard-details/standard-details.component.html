@@ -1,0 +1,246 @@
+<div class="standard-details-container">
+  <!-- Header Section -->
+  <mat-card class="header-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>school</mat-icon>
+        Class Details - {{ standard.name }}
+      </mat-card-title>
+      <mat-card-subtitle>
+        Complete information about the class and its students
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Classes
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading class details...</p>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading" class="content-grid">
+    <!-- Class Information -->
+    <mat-card class="info-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>info</mat-icon>
+          Class Information
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>Class ID:</strong>
+            <span>{{ standard.standardId }}</span>
+          </div>
+          <div class="info-item">
+            <strong>Class Name:</strong>
+            <span>{{ standard.name }}</span>
+          </div>
+          <div class="info-item">
+            <strong>Capacity:</strong>
+            <span>{{ standard.capacity }}</span>
+          </div>
+          <div class="info-item">
+            <strong>Current Students:</strong>
+            <span>{{ students.length }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Utilization Chart -->
+    <mat-card class="utilization-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>analytics</mat-icon>
+          Class Utilization
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="utilization-content">
+          <div class="utilization-percentage">
+            {{ getUtilizationPercentage() }}%
+          </div>
+          <div class="utilization-bar">
+            <div 
+              class="utilization-progress"
+              [style.width.%]="getUtilizationPercentage()"
+              [style.background-color]="getUtilizationColor()">
+            </div>
+          </div>
+          <div class="utilization-text">
+            {{ students.length }} / {{ standard.capacity }} students
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Assigned Subjects -->
+    <mat-card class="subjects-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>book</mat-icon>
+          Assigned Subjects
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="subjects-grid">
+          <div *ngFor="let subject of assignedSubjects" class="subject-chip">
+            <mat-icon>subject</mat-icon>
+            <span>{{ subject.name }}</span>
+            <button 
+              mat-icon-button 
+              color="warn" 
+              (click)="removeSubject(subject.subjectId)"
+              title="Remove subject">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Add Subject Section -->
+        <div class="add-subject-section" *ngIf="availableSubjects.length > 0">
+          <h4>Assign New Subject:</h4>
+          <div class="available-subjects">
+            <button 
+              *ngFor="let subject of availableSubjects" 
+              mat-raised-button 
+              color="accent"
+              (click)="assignSubject(subject.subjectId)"
+              [disabled]="isAssigningSubject"
+              class="assign-subject-btn">
+              <mat-icon>add</mat-icon>
+              {{ subject.name }}
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Students Section -->
+  <mat-card class="students-card" *ngIf="!isLoading">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>people</mat-icon>
+        Students List ({{ students.length }})
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- Search Bar -->
+      <div class="search-container">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search students...</mat-label>
+          <input 
+            matInput 
+            [(ngModel)]="searchTerm" 
+            (input)="onSearch()"
+            placeholder="Name, Admission No, Enrollment No, Email">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- Students Table -->
+      <div class="table-container">
+        <table mat-table [dataSource]="paginatedStudents" class="students-table">
+          <!-- ID Column -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let student">{{ student.studentId }}</td>
+          </ng-container>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let student">{{ student.name }}</td>
+          </ng-container>
+
+          <!-- Admission No Column -->
+          <ng-container matColumnDef="admissionNo">
+            <th mat-header-cell *matHeaderCellDef>Admission No</th>
+            <td mat-cell *matCellDef="let student">{{ student.admissionNo }}</td>
+          </ng-container>
+
+          <!-- Enrollment No Column -->
+          <ng-container matColumnDef="enrollmentNo">
+            <th mat-header-cell *matHeaderCellDef>Enrollment No</th>
+            <td mat-cell *matCellDef="let student">{{ student.enrollmentNo }}</td>
+          </ng-container>
+
+          <!-- Email Column -->
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef>Email</th>
+            <td mat-cell *matCellDef="let student">{{ student.email }}</td>
+          </ng-container>
+
+          <!-- Contact Column -->
+          <ng-container matColumnDef="contact">
+            <th mat-header-cell *matHeaderCellDef>Contact</th>
+            <td mat-cell *matCellDef="let student">{{ student.contact }}</td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let student">
+              <button 
+                mat-icon-button 
+                color="primary" 
+                (click)="viewStudentDetails(student.studentId)"
+                title="View Details">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button 
+                mat-icon-button 
+                color="accent" 
+                (click)="editStudent(student.studentId)"
+                title="Edit Student">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-container" *ngIf="totalPages > 1">
+        <button 
+          mat-icon-button 
+          [disabled]="currentPage === 1" 
+          (click)="goToPage(currentPage - 1)"
+          title="Previous page">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        
+        <span class="page-info">{{ currentPage }} / {{ totalPages }}</span>
+        
+        <button 
+          mat-icon-button 
+          [disabled]="currentPage === totalPages" 
+          (click)="goToPage(currentPage + 1)"
+          title="Next page">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+
+      <!-- No Students Message -->
+      <div *ngIf="paginatedStudents.length === 0" class="no-data-message">
+        <mat-icon>people_outline</mat-icon>
+        <h3>No students found</h3>
+        <p *ngIf="searchTerm">Try adjusting your search criteria.</p>
+        <p *ngIf="!searchTerm">No students are currently enrolled in this class.</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div> 

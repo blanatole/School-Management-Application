@@ -200,10 +200,10 @@ export class ProfileComponent implements OnInit {
     return roleIcons[primaryRole] || 'fas fa-user';
   }
 
-  // Load personal information
+  // Load personal information from backend
   private loadPersonalInfo(): void {
-    // In a real application, this would fetch data from a service
-    // For now, we use mock data
+    // TODO: Implement actual API call to fetch user profile data
+    // this.userService.getUserProfile().subscribe(data => { ... })
   }
 
   // Load user preferences

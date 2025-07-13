@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -50,6 +50,7 @@ import { PaymentDetailsPerStudentComponent } from './Components/payment-details/
 import { StandardListComponent } from './Components/standard/standard-list/standard-list.component';
 import { StandardEditComponent } from './Components/standard/standard-edit/standard-edit.component';
 import { StandardCreateComponent } from './Components/standard/standard-create/standard-create.component';
+import { StandardDetailsComponent } from './Components/standard/standard-details/standard-details.component';
 import { ConfirmationDialogComponent } from './Components/confirmation-dialog/confirmation-dialog.component';
 import { DepartmentListComponent } from './Components/department/department-list/department-list.component';
 import { OtherpaymentListComponent } from './Components/other-payment/other-payment-list/other-payment-list.component';
@@ -80,6 +81,9 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { HeaderComponent } from './Layout/header/header.component';
 import { SidebarComponent } from './Layout/sidebar/sidebar.component';
 import { DashboardComponent as DashboardGridComponent } from './Components/dashboard/dashboard-grid/dashboard-grid.component';
@@ -121,7 +125,7 @@ import { UsersComponent } from './Authentication/SecurityComponents/users/users.
   declarations: [
 
     AppComponent,
-    MarksListComponent, MarksAddComponent, MarksEditComponent, MarksDeleteComponent, AttendanceListComponent, AttendanceAddComponent, FeeListComponent, FeeEditComponent, FeeCreateComponent, FeetypeListComponent, FeetypeEditComponent, FeetypeCreateComponent, MonthlypaymentListComponent, MonthlypaymentEditComponent, MonthlypaymentDetailsComponent, MonthlypaymentCreatComponent, StaffListComponent, DepartmentListComponent, StaffSalaryListComponent, StaffCreateComponent, StaffEditComponent, ExamtypeListComponent, ExamtypeAddComponent, ExamtypeEditComponent, StaffDetailsComponent, StaffDeleteComponent, DepartmentEditComponent, DepartmentCreateComponent, OtherpaymentListComponent, OtherpaymentEditComponent, OtherpaymentDetailsComponent, OtherpaymentCreatComponent, PaymentDetailsPerStudentComponent, StandardListComponent, StandardEditComponent, StandardCreateComponent, ConfirmationDialogComponent, StaffSalaryCreateComponent, StaffSalaryEditComponent, MarksnewEntryListComponent, MarkEntryCreateComponent, MarkEntryDetailsComponent, MarksnewEntryDeleteComponent, HeaderComponent, SidebarComponent, DashboardComponent, DashboardGridComponent, MainComponent, ExamScheduleStandardsListComponent, ExamScheduleStandardsEditComponent, ExamScheduleStandardsCreateComponent, ExamscheduleListComponent, ExamscheduleEditComponent, ExamscheduleAddComponent, ListStudentComponent, StudentEditComponent, StudentDetailsComponent, StudentAddComponent, SubjectListComponent, SubjectEditComponent, SubjectAddComponent, HomepageComponent, RegistrationComponent,
+    MarksListComponent, MarksAddComponent, MarksEditComponent, MarksDeleteComponent, AttendanceListComponent, AttendanceAddComponent, FeeListComponent, FeeEditComponent, FeeCreateComponent, FeetypeListComponent, FeetypeEditComponent, FeetypeCreateComponent, MonthlypaymentListComponent, MonthlypaymentEditComponent, MonthlypaymentDetailsComponent, MonthlypaymentCreatComponent, StaffListComponent, DepartmentListComponent, StaffSalaryListComponent, StaffCreateComponent, StaffEditComponent, ExamtypeListComponent, ExamtypeAddComponent, ExamtypeEditComponent, StaffDetailsComponent, StaffDeleteComponent, DepartmentEditComponent, DepartmentCreateComponent, OtherpaymentListComponent, OtherpaymentEditComponent, OtherpaymentDetailsComponent, OtherpaymentCreatComponent, PaymentDetailsPerStudentComponent, StandardListComponent, StandardEditComponent, StandardCreateComponent, StandardDetailsComponent, ConfirmationDialogComponent, StaffSalaryCreateComponent, StaffSalaryEditComponent, MarksnewEntryListComponent, MarkEntryCreateComponent, MarkEntryDetailsComponent, MarksnewEntryDeleteComponent, HeaderComponent, SidebarComponent, DashboardComponent, DashboardGridComponent, MainComponent, ExamScheduleStandardsListComponent, ExamScheduleStandardsEditComponent, ExamScheduleStandardsCreateComponent, ExamscheduleListComponent, ExamscheduleEditComponent, ExamscheduleAddComponent, ListStudentComponent, StudentEditComponent, StudentDetailsComponent, StudentAddComponent, SubjectListComponent, SubjectEditComponent, SubjectAddComponent, HomepageComponent, RegistrationComponent,
     AssignRoleComponent, LoginComponent, RegisterComponent, ProfileComponent, RolesComponent, UsersComponent
     
   ],
@@ -141,7 +145,10 @@ import { UsersComponent } from './Authentication/SecurityComponents/users/users.
     MatListModule,
     MatButtonModule,
     MatCardModule,
-    MatTableModule
+    MatTableModule,
+    MatProgressSpinnerModule,
+    MatFormFieldModule,
+    MatInputModule
 
 
         
@@ -154,6 +161,7 @@ import { UsersComponent } from './Authentication/SecurityComponents/users/users.
     provideAnimationsAsync(),
     provideHttpClient(withInterceptors([authInterceptor]))
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

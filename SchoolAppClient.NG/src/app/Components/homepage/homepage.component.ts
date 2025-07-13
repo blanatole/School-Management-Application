@@ -15,34 +15,8 @@ interface RecentActivity {
 })
 export class HomepageComponent implements OnInit {
 
-  // Recent activities data
-  recentActivities: RecentActivity[] = [
-    {
-      icon: 'person_add',
-      title: 'Học sinh Nguyễn Văn An đã được đăng ký vào lớp 10A',
-      time: '5 phút trước'
-    },
-    {
-      icon: 'payment',
-      title: 'Thanh toán học phí tháng 10 đã được xử lý thành công',
-      time: '15 phút trước'
-    },
-    {
-      icon: 'grade',
-      title: 'Điểm kiểm tra Toán học lớp 12B đã được cập nhật',
-      time: '1 giờ trước'
-    },
-    {
-      icon: 'fact_check',
-      title: 'Điểm danh buổi sáng lớp 11C đã hoàn thành',
-      time: '2 giờ trước'
-    },
-    {
-      icon: 'quiz',
-      title: 'Lịch thi cuối kỳ đã được công bố',
-      time: '3 giờ trước'
-    }
-  ];
+  // Recent activities data - loaded from backend
+  recentActivities: RecentActivity[] = [];
 
   // Dynamic user count for demonstration
   private onlineUserCount: number = 24;

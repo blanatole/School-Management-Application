@@ -129,10 +129,8 @@ export class StandardListComponent implements OnInit {
 
   // View standard details
   viewStandardDetails(std: Standard): void {
-    // Navigate to standard details page or show modal
-    console.log('View standard details:', std);
-    // You can implement navigation to a details page here
-    // this.router.navigate(['/standard', std.standardId, 'details']);
+    // Navigate to standard details page
+    this.router.navigate(['/standard', std.standardId, 'details']);
   }
 
   // Utility methods
