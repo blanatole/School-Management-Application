@@ -179,23 +179,34 @@ namespace SchoolApiService.Controllers
         // POST: api/ExamScheduleStandards
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task PostExamScheduleStandard(CreateExamScheduleStandardVM request)
+        public async Task<ActionResult> PostExamScheduleStandard(CreateExamScheduleStandardVM request)
         {
             using (var transaction = _context.Database.BeginTransaction())
             {
                 try
                 {
-                    if (
-                            await _context.dbsExamScheduleStandard.AnyAsync(it =>
-                            it.ExamScheduleId == request.ExamScheduleId &&
-                            it.StandardId == request.StandardId
-                            )
-                        ) throw new Exception("Exam schedule standard already exist.");
+                    // Validate request
+                    if (request.ExamScheduleId <= 0 || request.StandardId <= 0)
+                    {
+                        return BadRequest("Invalid ExamScheduleId or StandardId");
+                    }
 
+                    if (request.ExamSubjects == null || !request.ExamSubjects.Any())
+                    {
+                        return BadRequest("At least one exam subject is required");
+                    }
+
+                    // Check if exam schedule standard already exists
+                    if (await _context.dbsExamScheduleStandard.AnyAsync(it =>
+                            it.ExamScheduleId == request.ExamScheduleId &&
+                            it.StandardId == request.StandardId))
+                    {
+                        return Conflict("Exam schedule for this standard already exists");
+                    }
+
+                    // Create exam schedule standard
                     var examScheduleStandard = new ExamScheduleStandard
                     {
-
-
                         ExamScheduleId = request.ExamScheduleId,
                         StandardId = request.StandardId
                     };
@@ -203,37 +214,51 @@ namespace SchoolApiService.Controllers
                     await _context.dbsExamScheduleStandard.AddAsync(examScheduleStandard);
                     await _context.SaveChangesAsync();
 
+                    // Create exam subjects
                     List<ExamSubject> examSubjects = [];
                     foreach (var examSubject in request.ExamSubjects)
                     {
-
-                        if (request.StandardId == await _context.dbsSubject.Where(it => it.SubjectId == examSubject.SubjectId).Select(it => it.StandardId).SingleOrDefaultAsync())
+                        // Parse time strings
+                        if (!DateTime.TryParse(examSubject.ExamStartTime, out DateTime startTime))
                         {
-                            DateTime.TryParse(examSubject.ExamStartTime, out DateTime startTime);
-                            DateTime.TryParse(examSubject.ExamEndTime, out DateTime endTime);
-
-                            examSubjects.Add(new ExamSubject
-                            {
-                                ExamDate = examSubject.ExamDate,
-                                ExamStartTime = startTime,
-                                ExamEndTime = endTime,
-                                SubjectId = examSubject.SubjectId,
-                                ExamScheduleStandardId = examScheduleStandard.ExamScheduleStandardId,
-                                ExamTypeId = examSubject.ExamTypeId,
-                            });
+                            return BadRequest($"Invalid start time format: {examSubject.ExamStartTime}");
                         }
+
+                        if (!DateTime.TryParse(examSubject.ExamEndTime, out DateTime endTime))
+                        {
+                            return BadRequest($"Invalid end time format: {examSubject.ExamEndTime}");
+                        }
+
+                        // Create exam subject
+                        examSubjects.Add(new ExamSubject
+                        {
+                            ExamDate = examSubject.ExamDate,
+                            ExamStartTime = startTime,
+                            ExamEndTime = endTime,
+                            SubjectId = examSubject.SubjectId,
+                            ExamScheduleStandardId = examScheduleStandard.ExamScheduleStandardId,
+                            ExamTypeId = examSubject.ExamTypeId,
+                        });
                     }
-                    if (examSubjects.Count > 0)
+
+                    if (examSubjects.Count == 0)
                     {
-                        await _context.dbsExamSubject.AddRangeAsync(examSubjects);
-                        await _context.SaveChangesAsync();
+                        return BadRequest("No valid exam subjects found.");
                     }
+
+                    await _context.dbsExamSubject.AddRangeAsync(examSubjects);
+                    await _context.SaveChangesAsync();
+
                     await transaction.CommitAsync();
+
+                    return CreatedAtAction(nameof(GetExamScheduleStandard), 
+                        new { id = examScheduleStandard.ExamScheduleStandardId }, 
+                        examScheduleStandard);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    //await transaction.RollbackAsync();
-                    throw;
+                    await transaction.RollbackAsync();
+                    return StatusCode(500, $"Internal server error: {ex.Message}");
                 }
             }
         }

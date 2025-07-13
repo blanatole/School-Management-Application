@@ -9,7 +9,7 @@ import { ExamtypeService } from '../../../Services/examtype.service';
 import { StandardService } from '../../../Services/standard.service';
 import { SubjectService } from '../../../Services/subject.service';
 import { ExamScheduleStandardService } from '../../../Services/exam-schedule-standard.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-exam-schedule-standards-create',
@@ -29,7 +29,8 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
     private standardService: StandardService,
     private subjectService: SubjectService,
     private examScheduleStandardsService: ExamScheduleStandardService,
-    private router: Router) { }
+    private router: Router,
+    private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.LoadExamSchedules();
@@ -37,21 +38,44 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
     this.LoadSubjects();
     this.LoadExamTypes();
     this.model = new CreateExamScheduleStandardVM();
+    
+    // Check if standardId is passed as query parameter
+    this.route.queryParams.subscribe(params => {
+      if (params['standardId']) {
+        this.model.standardId = +params['standardId'];
+      }
+    });
   }
 
   OnSubmit() {
+    if (!this.model.examScheduleId || !this.model.standardId || this.model.examSubjects.length === 0) {
+      alert('Please fill in all required fields and add at least one exam subject.');
+      return;
+    }
 
-    alert(JSON.stringify(this.model));
+    // Validate each exam subject
+    for (let i = 0; i < this.model.examSubjects.length; i++) {
+      const examSubject = this.model.examSubjects[i];
+      if (!examSubject.subjectId || !examSubject.examTypeId || !examSubject.examDate || !examSubject.examStartTime || !examSubject.examEndTime) {
+        alert(`Please fill in all fields for exam subject ${i + 1}.`);
+        return;
+      }
+    }
+
+    console.log('Submitting exam schedule data:', JSON.stringify(this.model, null, 2));
 
     this.examScheduleStandardsService.SaveExamScheduleStandards(this.model).subscribe({
-      next: () => {
+      next: (response) => {
+        console.log('Exam schedule created successfully:', response);
+        alert('Exam schedule created successfully!');
         this.router.navigate(['/examScheduleStandard']);
       },
       error: (err) => {
-        console.log(err);
+        console.error('Error creating exam schedule:', err);
+        const errorMessage = err.error?.message || err.message || 'Unknown error occurred';
+        alert(`Error creating exam schedule: ${errorMessage}`);
       }
     });
-
   }
 
   LoadExamSchedules() {

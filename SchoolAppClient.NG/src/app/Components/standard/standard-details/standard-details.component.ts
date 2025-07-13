@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { StandardService } from '../../../Services/standard.service';
 import { StudentService } from '../../../Services/student.service';
 import { SubjectService } from '../../../Services/subject.service';
+import { ExamScheduleService } from '../../../Services/exam-schedule.service';
+import { UpcomingExam } from '../../../Models/upcoming-exam';
 
 @Component({
   selector: 'app-standard-details',
@@ -16,6 +18,7 @@ export class StandardDetailsComponent implements OnInit {
   subjects: any[] = [];
   assignedSubjects: any[] = [];
   availableSubjects: any[] = [];
+  upcomingExams: UpcomingExam[] = [];
   
   // Pagination
   currentPage: number = 1;
@@ -30,6 +33,7 @@ export class StandardDetailsComponent implements OnInit {
   // Loading states
   isLoading: boolean = true;
   isAssigningSubject: boolean = false;
+  isLoadingExams: boolean = false;
   
   // Table columns
   displayedColumns: string[] = ['id', 'name', 'admissionNo', 'enrollmentNo', 'email', 'contact', 'actions'];
@@ -39,7 +43,8 @@ export class StandardDetailsComponent implements OnInit {
     private router: Router,
     private standardService: StandardService,
     private studentService: StudentService,
-    private subjectService: SubjectService
+    private subjectService: SubjectService,
+    private examScheduleService: ExamScheduleService
   ) {}
 
   ngOnInit(): void {
@@ -48,6 +53,7 @@ export class StandardDetailsComponent implements OnInit {
       this.loadStandardDetails();
       this.loadStudents();
       this.loadSubjects();
+      this.loadUpcomingExams();
     });
   }
 
@@ -86,9 +92,22 @@ export class StandardDetailsComponent implements OnInit {
         this.subjects = data;
         this.loadAssignedSubjects();
       },
-      (error: any) => {
+      (error) => {
         console.error('Error loading subjects:', error);
-        this.subjects = [];
+      }
+    );
+  }
+
+  loadUpcomingExams(): void {
+    this.isLoadingExams = true;
+    this.examScheduleService.GetUpcomingExamsForStandard(this.standardId).subscribe(
+      (data: UpcomingExam[]) => {
+        this.upcomingExams = data;
+        this.isLoadingExams = false;
+      },
+      (error) => {
+        console.error('Error loading upcoming exams:', error);
+        this.isLoadingExams = false;
       }
     );
   }

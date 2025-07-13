@@ -141,6 +141,32 @@ namespace SchoolApiService.Controllers
             return CreatedAtAction("GetExamSchedule", new { id = examSchedule.ExamScheduleId }, examSchedule);
         }
 
+        // GET: api/ExamSchedules/upcoming/{standardId}
+        [HttpGet("upcoming/{standardId}")]
+        public async Task<ActionResult<IEnumerable<UpcomingExamVM>>> GetUpcomingExamsForStandard(int standardId)
+        {
+            var upcomingExams = await _context.dbsExamScheduleStandard
+                .Where(ess => ess.StandardId == standardId)
+                .SelectMany(ess => ess.ExamSubjects)
+                .Where(es => es.ExamDate >= DateTime.Today) // Only future exams
+                .Select(es => new UpcomingExamVM
+                {
+                    ExamSubjectId = es.ExamSubjectId,
+                    ExamScheduleName = es.ExamScheduleStandard.ExamSchedule.ExamScheduleName,
+                    SubjectName = es.Subject.SubjectName,
+                    SubjectCode = es.Subject.SubjectCode,
+                    ExamTypeName = es.ExamType.ExamTypeName,
+                    ExamDate = es.ExamDate,
+                    ExamStartTime = es.ExamStartTime,
+                    ExamEndTime = es.ExamEndTime,
+                    DaysUntilExam = es.ExamDate.HasValue ? (int)(es.ExamDate.Value.Date - DateTime.Today).TotalDays : 0
+                })
+                .OrderBy(e => e.ExamDate)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return Ok(upcomingExams);
+        }
 
         // DELETE: api/ExamSchedules/5
         [HttpDelete("{id}")]

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { ExamScheduleVm } from '../Models/exam-schedule-vm';
 import { GetExamScheduleOptionsResponse } from '../Models/get-exam-schedule-options-response';
 import { ExamSchedule } from '../Models/exam-schedule';
+import { UpcomingExam } from '../Models/upcoming-exam';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +38,10 @@ export class ExamScheduleService {
 
   public GetExamScheduleById(id: number): Observable<ExamScheduleVm> {
     return this.http.get<ExamScheduleVm>(this.apiUrl + '/' + id);
+  }
+
+  public GetUpcomingExamsForStandard(standardId: number): Observable<UpcomingExam[]> {
+    return this.http.get<UpcomingExam[]>(this.apiUrl + '/upcoming/' + standardId);
   }
 
   public SaveExamSchedule(examSchedule: ExamSchedule): Observable<any> {

@@ -15,6 +15,10 @@
         <mat-icon>arrow_back</mat-icon>
         Back to Classes
       </button>
+      <button mat-raised-button color="accent" [routerLink]="['/examScheduleStandard/create']" [queryParams]="{standardId: standardId}">
+        <mat-icon>add_circle</mat-icon>
+        Create Exam
+      </button>
     </mat-card-actions>
   </mat-card>
 
@@ -121,6 +125,74 @@
               {{ subject.name }}
             </button>
           </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Upcoming Exams Section -->
+    <mat-card class="upcoming-exams-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>schedule</mat-icon>
+          Upcoming Exams
+        </mat-card-title>
+        <mat-card-subtitle>
+          Scheduled examinations for this class
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <!-- Loading State -->
+        <div *ngIf="isLoadingExams" class="loading-container">
+          <mat-spinner diameter="30"></mat-spinner>
+          <p>Loading upcoming exams...</p>
+        </div>
+
+        <!-- Exams List -->
+        <div *ngIf="!isLoadingExams && upcomingExams.length > 0" class="exams-list">
+          <div *ngFor="let exam of upcomingExams" class="exam-card">
+            <div class="exam-header">
+              <div class="exam-subject">
+                <mat-icon>subject</mat-icon>
+                <span class="subject-name">{{ exam.subjectName }}</span>
+                <span class="subject-code">({{ exam.subjectCode }})</span>
+              </div>
+              <div class="exam-type">
+                <mat-chip>{{ exam.examTypeName }}</mat-chip>
+              </div>
+            </div>
+            
+            <div class="exam-details">
+              <div class="exam-schedule">
+                <mat-icon>schedule</mat-icon>
+                <span class="exam-schedule-name">{{ exam.examScheduleName }}</span>
+              </div>
+              <div class="exam-datetime">
+                <mat-icon>event</mat-icon>
+                <span class="exam-date">{{ exam.examDate | date:'fullDate' }}</span>
+                <span class="exam-time">
+                  {{ exam.examStartTime | date:'shortTime' }} - {{ exam.examEndTime | date:'shortTime' }}
+                </span>
+              </div>
+            </div>
+            
+            <div class="exam-countdown">
+              <div class="countdown-badge" [class.urgent]="exam.daysUntilExam <= 3" [class.soon]="exam.daysUntilExam > 3 && exam.daysUntilExam <= 7">
+                <mat-icon>timer</mat-icon>
+                <span>{{ exam.daysUntilExam }} days remaining</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Exams Message -->
+        <div *ngIf="!isLoadingExams && upcomingExams.length === 0" class="no-exams-message">
+          <mat-icon>event_available</mat-icon>
+          <h3>No upcoming exams</h3>
+          <p>There are no scheduled examinations for this class at the moment.</p>
+          <button mat-raised-button color="primary" routerLink="/examScheduleStandard/create">
+            <mat-icon>add</mat-icon>
+            Create New Exam
+          </button>
         </div>
       </mat-card-content>
     </mat-card>
