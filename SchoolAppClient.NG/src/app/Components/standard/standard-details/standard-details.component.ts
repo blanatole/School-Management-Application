@@ -36,7 +36,7 @@ export class StandardDetailsComponent implements OnInit {
   isLoadingExams: boolean = false;
   
   // Table columns
-  displayedColumns: string[] = ['id', 'name', 'admissionNo', 'enrollmentNo', 'email', 'contact', 'actions'];
+  displayedColumns: string[] = ['stt', 'name'];
   
   constructor(
     private route: ActivatedRoute,

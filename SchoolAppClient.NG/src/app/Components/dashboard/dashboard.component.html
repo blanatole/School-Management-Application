@@ -40,11 +40,11 @@
             <i class="fas fa-user-graduate"></i>
           </div>
           <div class="stat-content">
-            <h3 class="stat-number">1,247</h3>
+            <h3 class="stat-number">{{ isLoadingStats ? '...' : formatNumber(getTotalStudents()) }}</h3>
             <p class="stat-label">Học sinh</p>
-            <div class="stat-trend positive">
-              <i class="fas fa-arrow-up"></i>
-              <span>+12% so với tháng trước</span>
+            <div class="stat-trend positive" *ngIf="!isLoadingStats && getTotalStudents() > 0">
+              <i class="fas fa-users"></i>
+              <span>Đang hoạt động</span>
             </div>
           </div>
         </div>
@@ -54,11 +54,11 @@
             <i class="fas fa-chalkboard-teacher"></i>
           </div>
           <div class="stat-content">
-            <h3 class="stat-number">85</h3>
-            <p class="stat-label">Giáo viên</p>
-            <div class="stat-trend stable">
-              <i class="fas fa-minus"></i>
-              <span>Không thay đổi</span>
+            <h3 class="stat-number">{{ isLoadingStats ? '...' : formatNumber(getTotalTeachers()) }}</h3>
+            <p class="stat-label">Giáo viên (ước tính)</p>
+            <div class="stat-trend stable" *ngIf="!isLoadingStats">
+              <i class="fas fa-calculator"></i>
+              <span>Tỷ lệ 1:{{ getTotalStudents() > 0 ? Math.round(getTotalStudents() / getTotalTeachers()) : 0 }}</span>
             </div>
           </div>
         </div>
@@ -68,11 +68,11 @@
             <i class="fas fa-door-open"></i>
           </div>
           <div class="stat-content">
-            <h3 class="stat-number">42</h3>
+            <h3 class="stat-number">{{ isLoadingStats ? '...' : formatNumber(getTotalClasses()) }}</h3>
             <p class="stat-label">Lớp học</p>
-            <div class="stat-trend positive">
-              <i class="fas fa-arrow-up"></i>
-              <span>+2 lớp mới</span>
+            <div class="stat-trend positive" *ngIf="!isLoadingStats && getTotalClasses() > 0">
+              <i class="fas fa-school"></i>
+              <span>{{ Math.round(getTotalStudents() / Math.max(getTotalClasses(), 1)) }} HS/lớp</span>
             </div>
           </div>
         </div>
@@ -82,11 +82,11 @@
             <i class="fas fa-chart-line"></i>
           </div>
           <div class="stat-content">
-            <h3 class="stat-number">2.4 tỷ</h3>
-            <p class="stat-label">Doanh thu (VNĐ)</p>
-            <div class="stat-trend positive">
-              <i class="fas fa-arrow-up"></i>
-              <span>+8.5% so với tháng trước</span>
+            <h3 class="stat-number">{{ isLoadingStats ? '...' : formatCurrency(getRevenue()) }}</h3>
+            <p class="stat-label">Doanh thu tháng (ước tính)</p>
+            <div class="stat-trend positive" *ngIf="!isLoadingStats && getRevenue() > 0">
+              <i class="fas fa-coins"></i>
+              <span>Dựa trên số học sinh</span>
             </div>
           </div>
         </div>

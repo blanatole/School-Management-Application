@@ -46,39 +46,41 @@
           <!-- Basic Info Grid -->
           <div class="form-grid">
             <div class="form-group">
-              <label for="studentName" class="required">Full Name</label>
+              <label for="studentName" class="required">Tên đầy đủ</label>
               <input type="text" class="form-control" id="studentName" name="studentName"
-                [(ngModel)]="students.studentName" required placeholder="Enter full name">
+                [(ngModel)]="students.studentName" required minlength="2" maxlength="100"
+                placeholder="Nhập tên đầy đủ">
             </div>
 
             <div class="form-group">
-              <label for="studentDOB" class="required">Date of Birth</label>
+              <label for="studentDOB" class="required">Ngày sinh</label>
               <input type="date" class="form-control" id="studentDOB" name="studentDOB"
-                [(ngModel)]="students.studentDOB" required>
+                [(ngModel)]="students.studentDOB" required 
+                min="1924-01-01" [max]="getMaxBirthDate()">
             </div>
 
             <div class="form-group">
-              <label for="studentGender" class="required">Gender</label>
+              <label for="studentGender" class="required">Giới tính</label>
               <select class="form-control" id="studentGender" name="studentGender" [(ngModel)]="students.studentGender"
                 required>
-                <option value="" disabled>Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
+                <option value="" disabled>Chọn giới tính</option>
+                <option value="Male">Nam</option>
+                <option value="Female">Nữ</option>
+                <option value="Other">Khác</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label for="studentReligion">Religion</label>
+              <label for="studentReligion">Tôn giáo</label>
               <input type="text" class="form-control" id="studentReligion" name="studentReligion"
-                [(ngModel)]="students.studentReligion" placeholder="Enter religion">
+                [(ngModel)]="students.studentReligion" maxlength="50" placeholder="Nhập tôn giáo">
             </div>
 
             <div class="form-group">
-              <label for="studentBloodGroup">Blood Group</label>
+              <label for="studentBloodGroup">Nhóm máu</label>
               <select class="form-control" id="studentBloodGroup" name="studentBloodGroup"
                 [(ngModel)]="students.studentBloodGroup">
-                <option value="">Select Blood Group</option>
+                <option value="">Chọn nhóm máu</option>
                 <option value="A+">A+</option>
                 <option value="A-">A-</option>
                 <option value="B+">B+</option>
@@ -91,15 +93,16 @@
             </div>
 
             <div class="form-group">
-              <label for="studentNationality">Nationality</label>
+              <label for="studentNationality">Quốc tịch</label>
               <input type="text" class="form-control" id="studentNationality" name="studentNationality"
-                [(ngModel)]="students.studentNationality" placeholder="Enter nationality">
+                [(ngModel)]="students.studentNationality" maxlength="50" placeholder="Nhập quốc tịch" value="Việt Nam">
             </div>
 
             <div class="form-group">
-              <label for="studentNIDNumber">NID Number</label>
+              <label for="studentNIDNumber">Số CMND/CCCD</label>
               <input type="text" class="form-control" id="studentNIDNumber" name="studentNIDNumber"
-                [(ngModel)]="students.studentNIDNumber" placeholder="Enter NID number">
+                [(ngModel)]="students.studentNIDNumber" pattern="[0-9]{9}|[0-9]{12}" 
+                maxlength="12" placeholder="Nhập số CMND/CCCD (9 hoặc 12 số)">
             </div>
           </div>
         </div>
@@ -114,9 +117,9 @@
         <div class="section-content">
           <div class="form-grid">
             <div class="form-group">
-              <label for="standardId" class="required">Class/Standard</label>
+              <label for="standardId" class="required">Lớp/Khối</label>
               <select class="form-control" id="standardId" name="standardId" [(ngModel)]="students.standardId" required>
-                <option value="" disabled>Select Standard</option>
+                <option value="" disabled>Chọn lớp</option>
                 <option *ngFor="let standard of standards" [value]="standard.standardId">
                   {{ standard.standardName }}
                 </option>
@@ -124,22 +127,22 @@
             </div>
 
             <div class="form-group">
-              <label for="admissionNo" class="required">Admission Number</label>
-              <input type="text" class="form-control" id="admissionNo" name="admissionNo"
-                [(ngModel)]="students.admissionNo" required placeholder="Enter admission number">
+              <label for="admissionNo" class="required">Số nhập học</label>
+              <input type="number" class="form-control" id="admissionNo" name="admissionNo"
+                [(ngModel)]="students.admissionNo" required min="1" placeholder="Nhập số nhập học">
             </div>
 
             <div class="form-group">
-              <label for="enrollmentNo" class="required">Enrollment Number</label>
-              <input type="text" class="form-control" id="enrollmentNo" name="enrollmentNo"
-                [(ngModel)]="students.enrollmentNo" required placeholder="Enter enrollment number">
+              <label for="enrollmentNo" class="required">Số đăng ký</label>
+              <input type="number" class="form-control" id="enrollmentNo" name="enrollmentNo"
+                [(ngModel)]="students.enrollmentNo" required min="1" placeholder="Nhập số đăng ký">
             </div>
 
             <div class="form-group">
-              <label for="uniqueStudentAttendanceNumber">Attendance Number</label>
-              <input type="text" class="form-control" id="uniqueStudentAttendanceNumber"
+              <label for="uniqueStudentAttendanceNumber">Số điểm danh</label>
+              <input type="number" class="form-control" id="uniqueStudentAttendanceNumber"
                 name="uniqueStudentAttendanceNumber" [(ngModel)]="students.uniqueStudentAttendanceNumber"
-                placeholder="Enter attendance number">
+                min="1" placeholder="Nhập số điểm danh">
             </div>
           </div>
         </div>
@@ -154,35 +157,40 @@
         <div class="section-content">
           <div class="form-grid">
             <div class="form-group">
-              <label for="studentEmail">Email Address</label>
+              <label for="studentEmail">Địa chỉ email</label>
               <input type="email" class="form-control" id="studentEmail" name="studentEmail"
-                [(ngModel)]="students.studentEmail" placeholder="Enter email address">
+                [(ngModel)]="students.studentEmail" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                maxlength="100" placeholder="Nhập địa chỉ email">
             </div>
 
             <div class="form-group">
-              <label for="studentContactNumber1">Primary Contact</label>
+              <label for="studentContactNumber1">Số điện thoại chính</label>
               <input type="tel" class="form-control" id="studentContactNumber1" name="studentContactNumber1"
-                [(ngModel)]="students.studentContactNumber1" placeholder="Enter primary contact number">
+                [(ngModel)]="students.studentContactNumber1" pattern="^0[0-9]{9,10}$"
+                maxlength="11" placeholder="Nhập số điện thoại (VD: 0987654321)">
             </div>
 
             <div class="form-group">
-              <label for="studentContactNumber2">Secondary Contact</label>
+              <label for="studentContactNumber2">Số điện thoại phụ</label>
               <input type="tel" class="form-control" id="studentContactNumber2" name="studentContactNumber2"
-                [(ngModel)]="students.studentContactNumber2" placeholder="Enter secondary contact number">
+                [(ngModel)]="students.studentContactNumber2" pattern="^0[0-9]{9,10}$"
+                maxlength="11" placeholder="Nhập số điện thoại phụ">
             </div>
           </div>
 
           <div class="form-grid">
             <div class="form-group full-width">
-              <label for="permanentAddress">Permanent Address</label>
+              <label for="permanentAddress">Địa chỉ thường trú</label>
               <textarea class="form-control" id="permanentAddress" name="permanentAddress"
-                [(ngModel)]="students.permanentAddress" rows="3" placeholder="Enter permanent address"></textarea>
+                [(ngModel)]="students.permanentAddress" rows="3" maxlength="500" 
+                placeholder="Nhập địa chỉ thường trú"></textarea>
             </div>
 
             <div class="form-group full-width">
-              <label for="temporaryAddress">Temporary Address</label>
+              <label for="temporaryAddress">Địa chỉ tạm trú</label>
               <textarea class="form-control" id="temporaryAddress" name="temporaryAddress"
-                [(ngModel)]="students.temporaryAddress" rows="3" placeholder="Enter temporary address"></textarea>
+                [(ngModel)]="students.temporaryAddress" rows="3" maxlength="500"
+                placeholder="Nhập địa chỉ tạm trú"></textarea>
             </div>
           </div>
         </div>
